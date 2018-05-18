@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import hoistNonReactStatics from 'hoist-non-react-statics';
 import Context from './utils/getContext';
 
 export default (WrappedComponent) => {
@@ -11,7 +12,7 @@ export default (WrappedComponent) => {
       )
     }
   }
-  return class extends PureComponent {
+  class OptimistWrapper extends PureComponent {
     constructor(props) {
       super(props);
       this.subs = [];
@@ -26,22 +27,18 @@ export default (WrappedComponent) => {
     onUnsubscribe = (...keys) => {
       this.subs = this.subs.filter(s => keys.indexOf(s) === -1); 
     }
-    onPush = (...args) => {
+    onGet = (...args) => {
       this.onSubscribe(args[0]);
-      this.originalOptimist.push(...args);
-    }
-    onReplace = (...args) => {
-      this.onSubscribe(args[0]);
-      this.originalOptimist.replace(...args);
+      return this.originalOptimist.get(...args);
     }
     lazyLoadOptimist(optimist) {
       if(!this.optimist) {
         this.originalOptimist = optimist;
         this.lastUpdated = Object.assign({}, optimist._updatedKeyMap);
         this.optimist = {
-          get: optimist.get,
-          push: this.onPush,
-          replace: this.onReplace,
+          get: this.onGet,
+          push: optimist.push,
+          queue: optimist.queue,
           subscribe: this.onSubscribe,
           unsubscribe: this.onUnsubscribe,
         };
@@ -82,5 +79,8 @@ export default (WrappedComponent) => {
       );
     }
   }
+  hoistNonReactStatics(OptimistWrapper, WrappedComponent);
+  hoistNonReactStatics(PureWrapper, WrappedComponent);
+  return OptimistWrapper;
 
 }

@@ -1,3 +1,3 @@
 export { default as withOptimist } from './withOptimist';
 
-export { default as OptimistKeeper } from './OptimistKeeper';
+export { default as OptimistProvider } from './OptimistProvider';

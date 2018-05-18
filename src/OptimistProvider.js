@@ -7,7 +7,7 @@ export default class extends PureComponent {
     this.state = {
       value: {
         push: this.onPush,
-        replace: this.onReplace,
+        queue: this.onQueue,
         get: this.onGet,
         _updatedKeyMap: {},
       },
@@ -26,13 +26,12 @@ export default class extends PureComponent {
     this.state.value._updatedKeyMap[key] = new Date().toISOString(); 
     const newValue = Object.assign({}, this.state.value);
     this.setState( { value: newValue} );
-    console.log(this.data);
   }
-  onPush = (key, value, handler) => {
+  onQueue = (key, value, handler) => {
     this.onUpdate(key, value);
     this.onAddToQueue(key, handler);
   }
-  onReplace = (key, value, handler) => {
+  onPush = (key, value, handler) => {
     this.onUpdate(key, value);
     this.onAddToQueue(key, handler, true);
   }
