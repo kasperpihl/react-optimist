@@ -39,8 +39,6 @@ export default (WrappedComponent) => {
           get: this.onGet,
           push: optimist.push,
           queue: optimist.queue,
-          subscribe: this.onSubscribe,
-          unsubscribe: this.onUnsubscribe,
         };
       }
     }

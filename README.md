@@ -20,9 +20,9 @@ withOptimist(Component) >> this.props.optimist
 
 # API
 The optimist object injected into your components has a simple api:
-- optimist.push(options)
-- optimist.push(key, value, handler) (shorthand)
-- optimist.get(key, [fallback])
+- [optimist.push(options)](https://github.com/swipesapp/react-optimist/blob/master/README.md#optimistpushoptions)
+- [optimist.push(key, value, handler) (shorthand)](https://github.com/swipesapp/react-optimist/blob/master/README.md#optimistpushkey-value-handlershorthand)
+- [optimist.get(key, [fallback])](https://github.com/swipesapp/react-optimist/blob/master/README.md#optimistgetkey-fallback)
 
 ## optimist.push(options)
 
