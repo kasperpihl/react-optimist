@@ -37,7 +37,6 @@ This inject a prop "optimist" into the wrapped component.
 Retreive the current offline value or an optional fallback value. 
 
 **Params**
-
 - key `string` - entry for the store
 - fallback `any value` - value to be used if nothing is in store
 
