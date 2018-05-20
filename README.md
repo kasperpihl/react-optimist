@@ -9,31 +9,26 @@ A user clicks on a button, you want to save the new state to a server, but you d
 $ npm install --save react-optimist
 ```
 
-# Usage
-react-optimist consist of two API's: OptimistProvider and withOptimist
-## OptimistProvider
-OptimistProvider is a highlevel react class that needs to be added once, similar to Provider (redux), BrowserRouter (react-router) and so on.
-
-```js
-// Somewhere like App.js or Root.js etc.
-import { OptimistProvider } from 'react-optimist';
-
-render(
-  <OptimistProvider>
-    <App />
-  </OptimistProvider>
-)
-```
-
-## withOptimist
-withOptimist is a higher-order-component (HOC) that you wrap any class that either needs to access to the optimistic data, or will be creating it (or both :).
+# High level
+react-optimist consist of two high level API's:
+- OptimistProvider is a react class that needs to be added once, similar to Provider (redux), BrowserRouter (react-router) and so on.
+- withOptimist is a higher-order-component (HOC) that you wrap any class that either needs to access to the optimistic data, or will be creating it (or both :). It injects a prop "optimist" into the wrapped component.
 
 ```
-withOptimist(Component)
+withOptimist(Component) >> this.props.optimist
 ```
-This inject a prop "optimist" into the wrapped component.
 
-### optimist.get(key, [fallback])
+# API
+The optimist object injected into your components has a simple api:
+- optimist.push(options)
+- optimist.push(key, value, handler) (shorthand)
+- optimist.get(key, [fallback])
+
+## optimist.push(options)
+
+## optimist.push(key, value, handler) (shorthand)
+
+## optimist.get(key, [fallback])
 Retreive the current offline value or an optional fallback value. 
 
 **Params**
