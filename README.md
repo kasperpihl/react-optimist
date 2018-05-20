@@ -1,26 +1,32 @@
 # react-optimist
+Welcome to React Optimist. A simple API for optimistic UI, using React and taking advantage of the [new Context API](https://reactjs.org/docs/context.html). Built for and maintained by [Swipes](https://swipesapp.com)
 
 ## Installation
+`$ npm install --save react-optimist`
+See all [installation options](https://github.com/swipesapp/react-optimist/docs/installation.md)
 
-Using [npm](https://www.npmjs.com/):
-
-    $ npm install --save react-optimist
-
-Then with a module bundler like [webpack](https://webpack.github.io/), use as you would anything else:
+## Usage
+react-optimist consist of two API's:  
+### OptimistProvider
+OptimistProvider is a highlevel react class that needs to be added once, similar to Provider from redux, BrowserRouter from react-router and so on.
 
 ```js
-// using ES6 modules
-import { withOptimist, OptimistKeeper } from 'react-optimist'
+// Somewhere like App.js or Root.js etc.
+import { OptimistProvider } from 'react-optimist';
 
-// using CommonJS modules
-var withOptimist = require('react-optimist').withOptimist;
-var OptimistKeeper = require('react-swiss').OptimistKeeper;
+render(
+  <OptimistProvider>
+    <App />
+  </OptimistProvider>
+)
 ```
 
-The UMD build is also available on [unpkg](https://unpkg.com):
+### withOptimist
+withOptimist is a higher-order-component (HOC) that you wrap any class that either needs to access to the optimistic data, or will be creating it (or both :).
 
-```html
-<script src="https://unpkg.com/react-optimist/dist/umd/optimist.min.js"></script>
-```
+`withOptimist(Component)`
+This inject a prop "optimist" into the wrapped component.
 
-You can find the library on `window.Optimist`.
+
+## Other projects built for and maintained by [Swipes](https://swipesapp.com)
+[swiss-react](https://github.com/swipesapp/react-swiss) - A CSS-in-js solution with sass-like features and an epic syntax.
