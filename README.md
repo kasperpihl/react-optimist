@@ -20,21 +20,17 @@ withOptimist(Component) >> this.props.optimist
 
 # The optimist object API
 The optimist object injected into your components has a simple api:
-- [optimist.identify(id, [options])](#optimistidentifyid-defaultoptions) - identify future calls and set default options
+Main API:
 - [optimist.set(options)](#optimistsetoptions) - queue optimistic requests
-- [optimist.set(key, value, handler) (shorthand)](#optimistsetkey-value-handlershorthand)
 - [optimist.get(key, [fallback])](#optimistgetkey-fallback) - get optimistic values
+Advanced:
+- [optimist.setDefaultOptions(options)](#optimistsetdefaultoptionsoptions) - identify future calls and set default options
+- [optimist.identify(id)](#optimistidentifyid) - identify future calls and set default options
 
-## optimist.identify(id, [defaultOptions])
-This will prepend id and set default options for future calls to set/get. **Not required to run this first**
-
-**Params**
-- id `string` - An id to prepend future calls to optimist.set (useful for id of a task/project/etc) 
-- defaultOptions `object` - An option object defining defaults, see optimist.set below for API.
 
 ## optimist.set(options)
 **Params**
-- options `object` - entry for the store
+- options `object` - An option object
 
 | Option | Type | Default value | Description |
 | --- | --- | --- | --- |
@@ -42,17 +38,10 @@ This will prepend id and set default options for future calls to set/get. **Not 
 | value | any | **(required)** | The value trying to be sent to the server and that should be used (optimistic) |
 | handler | function | **(required)** | The async handler, (next) => {}, you must call next when done |
 | serial | bool | false | Run all requests added to this queue, not just the last. |
-| debounce | number | 0 (ms) | Postpone the server request with x ms from now |
-| throttle | number | 0 (ms) | Run server requests every x ms |
 | clearOnError | boolean | true | When you return an error to next, wipe future requests |
+| debounce (coming soon) | number | 0 (ms) | Postpone the server request with x ms from now |
+| throttle (coming soon) | number | 0 (ms) | Run server requests every x ms |
 
-## optimist.set(key, value, handler) (shorthand)
-Like the push above, but with the required options filled out for key, value and handler.
-
-**Params**
-- key `string` - A key for the queue (ex: goal-reorder, task-119-complete)
-- value `any value` - The value trying to be sent to the server and that should be used (optimistic)
-- handler `function` - The async handler, (next) => {}, you must call next when done.
 
 ## optimist.get(key, [fallback])
 Retreive the current optimistic value or an optional fallback value. 
@@ -62,6 +51,18 @@ Retreive the current optimistic value or an optional fallback value.
 - fallback `any value` - value to be used if nothing is in store
 
 **Returns**: `store value or fallback`
+
+## optimist.setDefaultOptions(options)
+This will set default options for future calls to set/get.
+
+**Params**
+- options `object` - An option object defining defaults, see optimist.set above for supported props.
+
+## optimist.identify(id)
+This will prepend id for calls to set/get. **Not required to run this first**
+
+**Params**
+- id `string` - An id to prepend future calls to optimist.set (useful for id of a task/project/etc)
 
 # Other projects
 Built for and maintained by [Swipes](https://swipesapp.com)

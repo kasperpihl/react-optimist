@@ -9,6 +9,12 @@ export default class extends PureComponent {
         set: this.onSet,
         get: this.onGet,
         _updatedKeyMap: {},
+        defaultOptions: Object.assign({
+          serial: false,
+          debounce: 0,
+          throttle: 0,
+          clearOnError: true,
+        }, props.defaultOptions),
       },
     }
     this.data = {};
@@ -33,7 +39,9 @@ export default class extends PureComponent {
   onNext = (key, error) => {
     const options = this.runningOptions[key];
     delete this.runningOptions[key];
-    if(!this.queues[key].length) {
+    if(error) {
+      this.handleError(options, error)
+    } else if(!this.queues[key].length) {
       delete this.data[key];
       this.updateStateForKey(key);
     } else {
@@ -41,14 +49,30 @@ export default class extends PureComponent {
     }
     
   }
+  handleError(options, error) {
+    const { clearOnError } = options;
+    if(clearOnError) {
+      this.queues[key] = [];
+      delete this.data[key];
+      this.updateStateForKey(key);
+    } else {
+      this.queues[key] = [options].concat(this.queues[key]);
+      console.log('not sure yet what to do here. (on error without clearOnError)', error);
+      // What should I do in case of an error and behaviour is not to clear??..
+      /*
+        I'm thinking calling an error handler with a retry callback.
+        Then 
+      */
+    }
+  }
   updateStateForKey(key) {
     this.state.value._updatedKeyMap[key] = new Date().toISOString(); 
     const newValue = Object.assign({}, this.state.value);
     this.setState( { value: newValue} );
   }
   addToQueue(options) {
-    const { key } = options;
-    if(!this.queues[key]) {
+    const { key, serial } = options;
+    if(!this.queues[key] || !serial) {
       this.queues[key] = [];
     }
     this.queues[key].push(options);
@@ -62,9 +86,6 @@ export default class extends PureComponent {
     
     if(typeof options.handler !== 'function') {
       return this.onNext(key);
-    }
-    if(!options.handler.length) {
-      throw new Error('react-optimist: handler must take a first argument (next).');
     }
     options.handler(this.onNext.bind(this, key));
   }

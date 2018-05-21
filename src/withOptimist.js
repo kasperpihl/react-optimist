@@ -19,16 +19,11 @@ export default (WrappedComponent) => {
       this.defaultOptions = {};
       this.id = '';
     }
-    onIdentify = (id, options) => {
-      if(typeof id === 'string') {
-        this.id = id;
-      } else if(typeof id === 'object') {
-        options = id;
+    onIdentify = (id) => {
+      if(typeof id !== 'string') {
+        throw new Error('optimist.identify expects a string');
       }
-      
-      if(typeof options === 'object') {
-        this.defaultOptions = options;
-      }
+      this.id = id;
     }
     onGet = (key, fallback) => {
       key = `${this.id}--${key}`;
@@ -38,23 +33,33 @@ export default (WrappedComponent) => {
       }
       return this.optimistProvider.get(key, fallback);
     }
-    onSet = (key, value, handler) => {
-      let options = key;
-      if(typeof key === 'string') {
-        options = { key, value, handler };
+    onSet = (options) => {
+      if(typeof options !== 'object') {
+        throw new Error('optimist.set expects an object');
       }
       options.key = `${this.id}--${options.key}`;
-      options = Object.assign({}, this.defaultOptions, options);
-      return this.optimistProvider.set(options);
+
+      return this.optimistProvider.set(Object.assign(
+        {},
+        this.optimistProvider.defaultOptions, 
+        this.defaultOptions,
+        options
+      ));
+    }
+    onSetDefaultOptions = (options) => {
+      if(typeof options === 'object') {
+        this.defaultOptions = options;
+      }
     }
     lazyLoadOptimist(optimistProvider) {
       if(!this.optimist) {
         this.optimistProvider = optimistProvider;
         this.lastUpdated = Object.assign({}, optimistProvider._updatedKeyMap);
         this.optimist = {
-          identify: this.onIdentify
+          identify: this.onIdentify,
           get: this.onGet,
           set: this.onSet,
+          setDefaultOptions: this.onSetDefaultOptions,
         };
       }
     }
