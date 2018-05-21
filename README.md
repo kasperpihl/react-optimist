@@ -20,10 +20,10 @@ withOptimist(Component) >> this.props.optimist
 
 # The optimist object API
 The optimist object injected into your components has a simple api:
-- [optimist.identify(id, [options])](https://github.com/swipesapp/react-optimist/blob/master/README.md#optimistidentify-options) - identify future calls and set default options
-- [optimist.set(options)](https://github.com/swipesapp/react-optimist/blob/master/README.md#optimistsetoptions) - queue optimistic requests
-- [optimist.set(key, value, handler) (shorthand)](https://github.com/swipesapp/react-optimist/blob/master/README.md#optimistsetkey-value-handlershorthand)
-- [optimist.get(key, [fallback])](https://github.com/swipesapp/react-optimist/blob/master/README.md#optimistgetkey-fallback) - get optimistic values
+- [optimist.identify(id, [options])](#optimistidentifyid-defaultoptions) - identify future calls and set default options
+- [optimist.set(options)](#optimistsetoptions) - queue optimistic requests
+- [optimist.set(key, value, handler) (shorthand)](#optimistsetkey-value-handlershorthand)
+- [optimist.get(key, [fallback])](#optimistgetkey-fallback) - get optimistic values
 
 ## optimist.identify(id, [defaultOptions])
 This will prepend id and set default options for future calls to set/get. **Not required to run this first**
