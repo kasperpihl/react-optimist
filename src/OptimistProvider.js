@@ -6,34 +6,20 @@ export default class extends PureComponent {
     super(props);
     this.state = {
       value: {
-        push: this.onPush,
-        queue: this.onQueue,
+        set: this.onSet,
         get: this.onGet,
         _updatedKeyMap: {},
       },
     }
     this.data = {};
     this.queues = {};
-    this.runningQueues = {};
+    this.runningOptions = {};
   }
-  onUpdate = (key, value) => {
-    if(typeof value !== 'undefined') {
-      this.data[key] = value;
-    } else {
-      delete this.data[key];
-    }
-
-    this.state.value._updatedKeyMap[key] = new Date().toISOString(); 
-    const newValue = Object.assign({}, this.state.value);
-    this.setState( { value: newValue} );
-  }
-  onQueue = (key, value, handler) => {
-    this.onUpdate(key, value);
-    this.onAddToQueue(key, handler);
-  }
-  onPush = (key, value, handler) => {
-    this.onUpdate(key, value);
-    this.onAddToQueue(key, handler, true);
+  onSet = (options) => {
+    const { key, value, handler } = options;
+    this.data[key] = value;
+    this.updateStateForKey(key);
+    this.addToQueue(options);
   }
   onGet = (key, fallback) => {
     if(typeof this.data[key] !== 'undefined') {
@@ -45,27 +31,42 @@ export default class extends PureComponent {
     return;
   }
   onNext = (key, error) => {
-    delete this.runningQueues[key];
-    const { onError } = this.props;
-    if(error || !this.queues[key].length) {
-      this.onUpdate(key);
-      error && onError && onError(key, error);
+    const options = this.runningOptions[key];
+    delete this.runningOptions[key];
+    if(!this.queues[key].length) {
+      delete this.data[key];
+      this.updateStateForKey(key);
     } else {
-      this.onRunQueue(key);
+      this.runQueue(key);
     }
+    
   }
-  onAddToQueue = (key, handler, replace) => {
-    if(!this.queues[key] || replace) {
+  updateStateForKey(key) {
+    this.state.value._updatedKeyMap[key] = new Date().toISOString(); 
+    const newValue = Object.assign({}, this.state.value);
+    this.setState( { value: newValue} );
+  }
+  addToQueue(options) {
+    const { key } = options;
+    if(!this.queues[key]) {
       this.queues[key] = [];
     }
-    this.queues[key].push(handler);
-    this.onRunQueue(key);
+    this.queues[key].push(options);
+    this.runQueue(key);
   }
-  onRunQueue = (key) => {
-    if(this.runningQueues[key]) return;
-    this.runningQueues[key] = true;
-    const handler = this.queues[key].shift();
-    handler(this.onNext.bind(this, key));
+  runQueue(key) {
+    if(this.runningOptions[key]) return;
+    
+    const options = this.queues[key].shift();
+    this.runningOptions[key] = options;
+    
+    if(typeof options.handler !== 'function') {
+      return this.onNext(key);
+    }
+    if(!options.handler.length) {
+      throw new Error('react-optimist: handler must take a first argument (next).');
+    }
+    options.handler(this.onNext.bind(this, key));
   }
   render() {
     const { children } = this.props;

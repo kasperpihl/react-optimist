@@ -16,49 +16,64 @@ export default (WrappedComponent) => {
     constructor(props) {
       super(props);
       this.subs = [];
+      this.defaultOptions = {};
+      this.id = '';
     }
-    onSubscribe = (...keys) => {
-      keys.forEach((key) => {
-        if(this.subs.indexOf(key) === -1){
-          this.subs.push(key);
-        }
-      });
+    onIdentify = (id, options) => {
+      if(typeof id === 'string') {
+        this.id = id;
+      } else if(typeof id === 'object') {
+        options = id;
+      }
+      
+      if(typeof options === 'object') {
+        this.defaultOptions = options;
+      }
     }
-    onUnsubscribe = (...keys) => {
-      this.subs = this.subs.filter(s => keys.indexOf(s) === -1); 
+    onGet = (key, fallback) => {
+      key = `${this.id}--${key}`;
+      if(this.subs.indexOf(key) === -1){
+        this.subs.push(key);
+      }
+      return this.optimistProvider.get(key, fallback);
     }
-    onGet = (...args) => {
-      this.onSubscribe(args[0]);
-      return this.originalOptimist.get(...args);
+    onSet = (key, value, handler) => {
+      let options = key;
+      if(typeof key === 'string') {
+        options = { key, value, handler };
+      }
+      options.key = `${this.id}--${options.key}`;
+      options = Object.assign({}, this.defaultOptions, options);
+      return this.optimistProvider.set(options);
     }
-    lazyLoadOptimist(optimist) {
+    lazyLoadOptimist(optimistProvider) {
       if(!this.optimist) {
-        this.originalOptimist = optimist;
-        this.lastUpdated = Object.assign({}, optimist._updatedKeyMap);
+        this.optimistProvider = optimistProvider;
+        this.lastUpdated = Object.assign({}, optimistProvider._updatedKeyMap);
         this.optimist = {
+          identify: this.onIdentify
           get: this.onGet,
-          push: optimist.push,
-          queue: optimist.queue,
+          set: this.onSet,
         };
       }
     }
-    determineShouldUpdate(optimist) {
+    determineShouldUpdate(optimistProvider) {
       let shouldUpdate;
       this.subs.forEach((key) => {
-        if(this.lastUpdated[key] !== optimist._updatedKeyMap[key]) {
+        if(this.lastUpdated[key] !== optimistProvider._updatedKeyMap[key]) {
           shouldUpdate = true;
         }
       })
-      this.lastUpdated = Object.assign({}, optimist._updatedKeyMap);
+      this.lastUpdated = Object.assign({}, optimistProvider._updatedKeyMap);
       
-      this.optimist._updatedKeyMap = optimist._updatedKeyMap;
+      this.optimist._updatedKeyMap = optimistProvider._updatedKeyMap;
 
       return shouldUpdate;
     }
-    renderInner(optimist) {
-      this.lazyLoadOptimist(optimist);
+    renderInner(optimistProvider) {
+      this.lazyLoadOptimist(optimistProvider);
       
-      if(this.determineShouldUpdate(optimist)) {
+      if(this.determineShouldUpdate(optimistProvider)) {
         // Here we force the pure render to happen by creating a new object.
         this.optimist = Object.assign({}, this.optimist);
       }
@@ -72,7 +87,7 @@ export default (WrappedComponent) => {
     render() {
       return (
         <Context.Consumer>
-          {(optimist) => this.renderInner(optimist)}
+          {(optimistProvider) => this.renderInner(optimistProvider)}
         </Context.Consumer>
       );
     }
