@@ -32,6 +32,7 @@ export default (WrappedComponent) => {
     }
     onGet = (key, fallback) => {
       key = `${this.id}--${key}`;
+      // Subscribe for changes
       if(this.subs.indexOf(key) === -1){
         this.subs.push(key);
       }
@@ -58,12 +59,10 @@ export default (WrappedComponent) => {
       }
     }
     determineShouldUpdate(optimistProvider) {
-      let shouldUpdate;
-      this.subs.forEach((key) => {
-        if(this.lastUpdated[key] !== optimistProvider._updatedKeyMap[key]) {
-          shouldUpdate = true;
-        }
-      })
+      const shouldUpdate = !!this.subs.filter((key) => (
+        this.lastUpdated[key] !== optimistProvider._updatedKeyMap[key]
+      )).length;
+
       this.lastUpdated = Object.assign({}, optimistProvider._updatedKeyMap);
       
       this.optimist._updatedKeyMap = optimistProvider._updatedKeyMap;
