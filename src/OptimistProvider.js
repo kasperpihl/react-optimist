@@ -31,10 +31,7 @@ export default class extends PureComponent {
     if(typeof this.data[key] !== 'undefined') {
       return this.data[key];
     }
-    if(typeof fallback !== 'undefined') {
-      return fallback;
-    }
-    return;
+    return fallback;
   }
   onNext = (key, error) => {
     const options = this.runningOptions[key];

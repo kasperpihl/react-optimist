@@ -1,5 +1,5 @@
 Welcome to React Optimist. A simple API for optimistic UI, using React and taking advantage of the [new Context API](https://reactjs.org/docs/context.html).
-Built for and maintained by [Swipes](https://swipesapp.com)
+Used and maintained by [Swipes](https://swipesapp.com)
 
 # Idea
 A user clicks on a button, you want to save the new state to a server, but you don't want to show a loader in the meantime. react-optimist let's you easily queue requests in the background while showing the new value. Also known as optimistic ui.
@@ -65,6 +65,6 @@ This will prepend id for calls to set/get. **Not required to run this first**
 - id `string` - An id to prepend future calls to optimist.set (useful for id of a task/project/etc)
 
 # Other projects
-Built for and maintained by [Swipes](https://swipesapp.com)
+Used and maintained by [Swipes](https://swipesapp.com)
 
 - [swiss-react](https://github.com/swipesapp/react-swiss) - A CSS-in-js solution with sass-like features and an epic syntax.
