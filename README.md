@@ -20,11 +20,19 @@ withOptimist(Component) >> this.props.optimist
 
 # The optimist object API
 The optimist object injected into your components has a simple api:
-- [optimist.push(options)](https://github.com/swipesapp/react-optimist/blob/master/README.md#optimistpushoptions) - queue optimistic requests
-- [optimist.push(key, value, handler) (shorthand)](https://github.com/swipesapp/react-optimist/blob/master/README.md#optimistpushkey-value-handlershorthand)
+- [optimist.identify(id, [options])](https://github.com/swipesapp/react-optimist/blob/master/README.md#optimistidentify-options) - identify future calls and set default options
+- [optimist.set(options)](https://github.com/swipesapp/react-optimist/blob/master/README.md#optimistsetoptions) - queue optimistic requests
+- [optimist.set(key, value, handler) (shorthand)](https://github.com/swipesapp/react-optimist/blob/master/README.md#optimistsetkey-value-handlershorthand)
 - [optimist.get(key, [fallback])](https://github.com/swipesapp/react-optimist/blob/master/README.md#optimistgetkey-fallback) - get optimistic values
 
-## optimist.push(options)
+## optimist.identify(id, [defaultOptions])
+This will prepend id and set default options for future calls to set/get. **Not required to run this first**
+
+**Params**
+- id `string` - An id to prepend future calls to optimist.set (useful for id of a task/project/etc) 
+- defaultOptions `object` - An option object defining defaults, see optimist.set below for API.
+
+## optimist.set(options)
 **Params**
 - options `object` - entry for the store
 
@@ -33,14 +41,18 @@ The optimist object injected into your components has a simple api:
 | key | string | **(required)** | A key for the queue (ex: goal-reorder, task-119-complete) |
 | value | any | **(required)** | The value trying to be sent to the server and that should be used (optimistic) |
 | handler | function | **(required)** | The async handler, (next) => {}, you must call next when done |
+| serial | bool | false | Run all requests added to this queue, not just the last. |
+| debounce | number | 0 (ms) | Postpone the server request with x ms from now |
+| throttle | number | 0 (ms) | Run server requests every x ms |
+| clearOnError | boolean | true | When you return an error to next, wipe future requests |
 
-## optimist.push(key, value, handler) (shorthand)
+## optimist.set(key, value, handler) (shorthand)
 Like the push above, but with the required options filled out for key, value and handler.
 
 **Params**
 - key `string` - A key for the queue (ex: goal-reorder, task-119-complete)
 - value `any value` - The value trying to be sent to the server and that should be used (optimistic)
-- handler(next) `function` - The async handler, (next) => {}, you must call next when done
+- handler `function` - The async handler, (next) => {}, you must call next when done.
 
 ## optimist.get(key, [fallback])
 Retreive the current optimistic value or an optional fallback value. 
