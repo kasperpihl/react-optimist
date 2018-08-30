@@ -8,6 +8,7 @@ export default class extends PureComponent {
       value: {
         set: this.onSet,
         get: this.onGet,
+        unset: this.onUnset,
         _updatedKeyMap: {},
         defaultOptions: Object.assign({
           serial: false,
@@ -25,7 +26,17 @@ export default class extends PureComponent {
     const { key, value, handler } = options;
     this.data[key] = value;
     this.updateStateForKey(key);
-    this.addToQueue(options);
+    if(typeof handler === 'function') {
+      this.addToQueue(options);
+    } else {
+      return this.onNext.bind(this, key);
+    }
+  }
+  onUnset = (key) => {
+    delete this.data[key];
+    delete this.runningOptions[key];
+    delete this.queues[key];
+    this.updateStateForKey(key);
   }
   onGet = (key, fallback) => {
     if(typeof this.data[key] !== 'undefined') {

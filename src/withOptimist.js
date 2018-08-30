@@ -33,7 +33,14 @@ export default (WrappedComponent) => {
       }
       return this.optimistProvider.get(key, fallback);
     }
-    onSet = (options) => {
+    onSet = (options, value, handler) => {
+      if(typeof options === 'string') {
+        options = {
+          key: options,
+          value,
+          handler,
+        }
+      }
       if(typeof options !== 'object') {
         throw new Error('optimist.set expects an object');
       }
@@ -45,6 +52,12 @@ export default (WrappedComponent) => {
         this.defaultOptions,
         options
       ));
+    }
+    onUnset = (key) => {
+      if(typeof key !== 'string') {
+        throw new Error('optimist.unset expects a key (string)');
+      }
+      return this.optimistProvider.unset(`${this.id}--${key}`);
     }
     onSetDefaultOptions = (options) => {
       if(typeof options === 'object') {
@@ -59,6 +72,7 @@ export default (WrappedComponent) => {
           identify: this.onIdentify,
           get: this.onGet,
           set: this.onSet,
+          unset: this.onUnset,
           setDefaultOptions: this.onSetDefaultOptions,
         };
       }
