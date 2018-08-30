@@ -1,6 +1,6 @@
 {
   "name": "react-optimist",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Optimistic UI for React using the new Context API.",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
