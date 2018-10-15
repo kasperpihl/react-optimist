@@ -1,7 +1,7 @@
-import React, { PureComponent } from "react";
+import React, { Component } from "react";
 import Context from "./utils/getContext";
 
-export default class extends PureComponent {
+export default class extends Component {
   constructor(props) {
     super(props);
     this.state = {
